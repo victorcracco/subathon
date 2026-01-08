@@ -36,17 +36,17 @@ const PARTICIPANTS = [
   { 
     name: "Marcove", imageFallback: "M", twitchId: "marcove", 
     carModel: "RAM Rebel", 
-    links: [{ type: 'instagram', url: 'https://instagram.com/marcove' }, { type: 'twitch', url: 'https://twitch.tv/marcove' }]
+    links: [{ type: 'instagram', url: 'https://instagram.com/marcovebb' }, { type: 'twitch', url: 'https://twitch.tv/marcove' }]
   },
   { 
     name: "Sheviii2k", imageFallback: "S", twitchId: "sheviii2k", 
     carModel: "Toyota 4Runner", 
-    links: [{ type: 'instagram', url: 'https://instagram.com/shevii2k' }, { type: 'twitch', url: 'https://twitch.tv/shevii2k' }, { type: 'youtube', url: 'https://youtube.com/@sheviii2k' }]
+    links: [{ type: 'instagram', url: 'https://instagram.com/sheviii2k' }, { type: 'twitch', url: 'https://twitch.tv/sheviii2k' }, { type: 'youtube', url: 'https://youtube.com/@sheviii2k' }]
   },
   { 
     name: "LinsJr", imageFallback: "L", twitchId: "linsjr", 
     carModel: "Lexus GX 470", 
-    links: [{ type: 'instagram', url: 'https://instagram.com/linsjr' }, { type: 'twitch', url: 'https://twitch.tv/linsjr' }, { type: 'youtube', url: 'https://youtube.com/linsjr' }]
+    links: [{ type: 'instagram', url: 'https://instagram.com/jrliinss' }, { type: 'twitch', url: 'https://twitch.tv/linsjr' }, { type: 'youtube', url: 'https://www.youtube.com/@LinsJunior' }]
   },
   { 
     name: "Stereo", imageFallback: "S", twitchId: "stereonline", customImage: IMAGES.STEREO,
