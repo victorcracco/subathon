@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import StreamPlayer from "@/components/stream/StreamPlayer";
 import { getTwitchStreams, getTwitchUsers, getTwitchClips } from "@/app/actions"; 
+import WeatherWidget from "@/components/WeatherWidget"; 
 import { Play, Users, Radio, LayoutGrid, Loader2, Eye, Twitter, Instagram, Youtube, X, Twitch, MapPin, Navigation, Car } from "lucide-react";
 
 // --- IMAGENS ---
@@ -19,7 +20,7 @@ const KickIcon = () => (
 
 // --- CANAIS DA LIVE ---
 const CHANNELS = [
-  { id: 'sheviii2k', name: 'Shevii2k', platform: 'twitch' }, // ID CORRIGIDO (3 'i's)
+  { id: 'sheviii2k', name: 'Shevii2k', platform: 'twitch' },
   { id: 'jonvlogs', name: 'Jon Vlogs', platform: 'twitch' },
   { id: 'linsjr', name: 'LinsJr', platform: 'twitch' },
   { id: 'stereonline', name: 'Stereo', platform: 'kick', customImage: IMAGES.STEREO },
@@ -38,9 +39,9 @@ const PARTICIPANTS = [
     links: [{ type: 'instagram', url: 'https://instagram.com/marcove' }, { type: 'twitch', url: 'https://twitch.tv/marcove' }]
   },
   { 
-    name: "Shevii2k", imageFallback: "S", twitchId: "sheviii2k", // ID CORRIGIDO (3 'i's)
+    name: "Sheviii2k", imageFallback: "S", twitchId: "sheviii2k", 
     carModel: "Toyota 4Runner", 
-    links: [{ type: 'instagram', url: 'https://instagram.com/shevii2k' }, { type: 'twitch', url: 'https://twitch.tv/sheviii2k' }, { type: 'youtube', url: 'https://youtube.com/@sheviii2k' }]
+    links: [{ type: 'instagram', url: 'https://instagram.com/shevii2k' }, { type: 'twitch', url: 'https://twitch.tv/shevii2k' }, { type: 'youtube', url: 'https://youtube.com/@sheviii2k' }]
   },
   { 
     name: "LinsJr", imageFallback: "L", twitchId: "linsjr", 
@@ -66,35 +67,32 @@ const SocialIcon = ({ type }: { type: string }) => {
 };
 
 export default function Home() {
-  const [activeChannel, setActiveChannel] = useState(CHANNELS[0]);
+  // --- CORREÇÃO AQUI: Adicionei <typeof CHANNELS[number]> para o TypeScript aceitar qualquer canal ---
+  const [activeChannel, setActiveChannel] = useState<typeof CHANNELS[number]>(CHANNELS[0]);
+  
   const [liveData, setLiveData] = useState<any[]>([]);
   const [usersData, setUsersData] = useState<any[]>([]);
   const [clips, setClips] = useState<any[]>([]);
   
-  // Alterado padrão para 60 dias para buscar bem mais clips
   const [clipTimeFilter, setClipTimeFilter] = useState<number>(60); 
   const [clipStreamerFilter, setClipStreamerFilter] = useState<string>('all'); 
   const [isLoadingClips, setIsLoadingClips] = useState(false);
   const [activeClip, setActiveClip] = useState<string | null>(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
 
+  const currentLocation = "Orlando"; 
+
   useEffect(() => {
     async function initData() {
       const channelLogins = CHANNELS.filter(c => c.platform === 'twitch').map(c => c.id);
-      // Inclui IDs de participantes (marcove, sheviii2k, etc)
       const participantLogins = PARTICIPANTS.map(p => p.twitchId).filter(Boolean);
       const allLogins = Array.from(new Set([...channelLogins, ...participantLogins]));
 
       if (allLogins.length > 0) {
-        // Busca avatares
         const users = await getTwitchUsers(allLogins);
         setUsersData(users);
-        
-        // Busca status live
         const streams = await getTwitchStreams(channelLogins);
         setLiveData(streams);
-        
-        // Busca clips dos últimos 60 dias
         fetchClips(channelLogins, 60);
       }
     }
@@ -105,18 +103,16 @@ export default function Home() {
     setIsLoadingClips(true);
     let currentUsers = usersData;
     
-    // Se usersData ainda não carregou, busca agora
     if (currentUsers.length === 0) {
        currentUsers = await getTwitchUsers(logins);
        setUsersData(currentUsers);
     }
     
-    // Converte logins para IDs numéricos para a API de clips
     const userIds = currentUsers.filter((u: any) => logins.includes(u.login)).map((u: any) => u.id);
     
     if (userIds.length > 0) {
       const fetchedClips = await getTwitchClips(userIds, days);
-      setClips(fetchedClips);
+      setClips(fetchedClips.slice(0, 20)); // Limite de 20 clips
     }
     setIsLoadingClips(false);
   };
@@ -130,7 +126,6 @@ export default function Home() {
   const filteredClipsDisplay = useMemo(() => {
     if (clipStreamerFilter === 'all') return clips;
     const selectedUser = usersData.find((u: any) => u.login === clipStreamerFilter);
-    // Filtra pelo ID numérico
     if (selectedUser) return clips.filter(c => c.broadcaster_id === selectedUser.id);
     return [];
   }, [clips, clipStreamerFilter, usersData]);
@@ -150,9 +145,9 @@ export default function Home() {
   return (
     <div className="space-y-16 animate-fade-in pb-20 pt-6">
       
-      {/* MODAL CLIP */}
+      {/* MODAL CLIP (Z-Index Máximo) */}
       {activeClip && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in" onClick={() => setActiveClip(null)}>
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in" onClick={() => setActiveClip(null)}>
            <div className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden border border-ice-400/30 shadow-[0_0_50px_rgba(96,165,250,0.3)]">
              <iframe src={`${activeClip}&parent=${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}&autoplay=true`} className="w-full h-full" allowFullScreen />
              <button onClick={() => setActiveClip(null)} className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full transition-colors"><X size={20}/></button>
@@ -160,16 +155,16 @@ export default function Home() {
         </div>
       )}
 
-      {/* MODAL MAPA */}
+      {/* MODAL MAPA (Z-INDEX 99999) */}
       {isMapOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in">
            <div className="relative w-full max-w-6xl h-[85vh] bg-slate-900 rounded-3xl overflow-hidden border border-ice-400/50 shadow-[0_0_50px_rgba(96,165,250,0.4)] flex flex-col">
              <div className="bg-black/60 backdrop-blur-md p-4 flex items-center justify-between border-b border-white/10 absolute top-0 left-0 right-0 z-10">
                 <div className="flex items-center gap-3">
                    <div className="w-10 h-10 rounded-full bg-ice-400/20 flex items-center justify-center animate-pulse"><Navigation className="text-ice-400" size={20} /></div>
                    <div><h3 className="font-black text-white text-lg leading-tight uppercase tracking-wider">Rastreamento</h3><p className="text-ice-300 text-xs font-bold">Ao Vivo</p></div>
                 </div>
-                <button onClick={() => setIsMapOpen(false)} className="bg-white/10 hover:bg-red-500/80 text-white p-2 rounded-full transition-colors"><X size={24} /></button>
+                <button onClick={() => setIsMapOpen(false)} className="bg-white/10 hover:bg-red-500/80 text-white p-2 rounded-full transition-colors cursor-pointer z-50"><X size={24} /></button>
              </div>
              <iframe src={MAP_URL} className="w-full h-full" allow="geolocation" />
            </div>
@@ -226,7 +221,7 @@ export default function Home() {
         </div>
       </section>
 
-{/* TOP CLIPS */}
+      {/* TOP CLIPS */}
       <section className="pt-10 border-t border-white/10">
         <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between mb-8 gap-4">
            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
@@ -238,7 +233,6 @@ export default function Home() {
            {isLoadingClips ? (
              <div className="col-span-4 text-center py-12 text-slate-500 flex flex-col items-center gap-2"><Loader2 className="w-8 h-8 animate-spin text-ice-400"/> Carregando clips...</div>
            ) : filteredClipsDisplay.length > 0 ? (
-             /* AQUI ESTÁ O LIMITE DE 20 CLIPS */
              filteredClipsDisplay.slice(0, 20).map((clip) => (
                <div key={clip.id} className="group cursor-pointer" onClick={() => setActiveClip(clip.embed_url)}>
                   <div className="relative aspect-video rounded-xl overflow-hidden mb-3 border border-white/10 group-hover:border-ice-400/50 transition-all shadow-lg">
