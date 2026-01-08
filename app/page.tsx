@@ -74,7 +74,7 @@ export default function Home() {
   const [usersData, setUsersData] = useState<any[]>([]);
   const [clips, setClips] = useState<any[]>([]);
   
-  const [clipTimeFilter, setClipTimeFilter] = useState<number>(60); 
+  const [clipTimeFilter, setClipTimeFilter] = useState<number>(7); 
   const [clipStreamerFilter, setClipStreamerFilter] = useState<string>('all'); 
   const [isLoadingClips, setIsLoadingClips] = useState(false);
   const [activeClip, setActiveClip] = useState<string | null>(null);
@@ -93,7 +93,7 @@ export default function Home() {
         setUsersData(users);
         const streams = await getTwitchStreams(channelLogins);
         setLiveData(streams);
-        fetchClips(channelLogins, 60);
+        fetchClips(channelLogins, 7);
       }
     }
     initData();
