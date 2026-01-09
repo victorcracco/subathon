@@ -10,6 +10,7 @@ import WeatherWidget from "@/components/WeatherWidget";
 const NAV_ITEMS = [
   { label: "Lives", path: "/" },
   { label: "Multilive", path: "/multilive" },
+  { label: "Destino", path: "/destino" },
   { label: "Clips", path: "/clips" },
 ];
 
