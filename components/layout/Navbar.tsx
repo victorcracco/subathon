@@ -19,7 +19,7 @@ export default function Navbar() {
   const { isSnowEnabled, toggleSnow } = useTheme();
 
   // Defina a cidade atual aqui
-  const currentLocation = "Orlando";
+  const currentLocation = "Macon";
 
   return (
     // CORRIGIDO: Voltamos para bg-black/30 para manter o efeito translúcido original
