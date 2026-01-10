@@ -6,9 +6,7 @@ import { MapPin, Navigation, Clock, Calendar, Car, ArrowRight, Share2, ExternalL
 // URL para abrir no celular (Google Maps App)
 const GOOGLE_MAPS_LINK = "https://www.google.com/maps/dir/Atlanta,+GA/Nashville,+TN";
 
-// URL do Iframe (Embed)
-// Dica: Para a linha azul exata aparecer no iframe, você precisaria gerar um embed específico no site do Google Maps.
-// Deixei aqui um link centralizado na região entre Atlanta e Nashville.
+// URL do Iframe (Embed) - Rota entre Atlanta e Nashville
 const MAP_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1672892.569949666!2d-86.83707576508386!3d34.93666657984407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0x88f5045d6993098d%3A0x66fede2f990b630b!2sAtlanta%2C%20Ge%C3%B3rgia%2C%20EUA!3m2!1d33.748752!2d-84.38768449999999!4m5!1s0x8864ec3213eb903d%3A0x7d3fb9d0a1e9daa0!2sNashville%2C%20Tennessee%2C%20EUA!3m2!1d36.1626638!2d-86.7816016!5e0!3m2!1spt-BR!2sbr!4v1704840000000!5m2!1spt-BR!2sbr";
 
 export default function DestinoPage() {

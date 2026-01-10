@@ -20,7 +20,7 @@ export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true); // Estado para controlar visibilidade
   const { isSnowEnabled, toggleSnow } = useTheme();
 
-  const currentLocation = "Atlanta";
+  const currentLocation = "Nashville";
 
   return (
     <>
