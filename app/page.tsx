@@ -7,9 +7,10 @@ import { getTwitchStreams, getTwitchUsers, getTwitchClips } from "@/app/actions"
 import WeatherWidget from "@/components/WeatherWidget"; 
 import { Play, Users, Radio, LayoutGrid, Loader2, Eye, Twitter, Instagram, Youtube, X, Twitch, MapPin, Navigation, Car } from "lucide-react";
 
-// --- IMAGENS ---
+
 const IMAGES = {
   STEREO: "https://files.kick.com/images/user/751972/profile_image/conversion/81c97a63-7038-4a6a-ac9c-4e10b9b71537-fullsize.webp",
+  MARCOVE: "https://static-cdn.jtvnw.net/jtv_user_pictures/fec7f4a0-04ac-48cd-ad0b-e06bb39234a4-profile_image-70x70.png",
 };
 
 const MAP_URL = "https://rtirl.com/twitch:119611214";
@@ -26,6 +27,13 @@ const CHANNELS = [
   { id: 'stereonline', name: 'Stereo', platform: 'kick', customImage: IMAGES.STEREO },
 ] as const;
 
+// --- LINKS DE RASTREAMENTO ---
+const TRACKING_LINKS = [
+  { name: "Shevii2k", url: "https://rtirl.com/twitch:119611214" },
+  { name: "Jon Vlogs", url: "https://rtirl.com/twitch:103989988" },
+  { name: "LinsJr", url: "https://rtirl.com/twitch:264931435" },
+];
+
 // --- LISTA DE PARTICIPANTES ---
 const PARTICIPANTS = [
   { 
@@ -33,8 +41,11 @@ const PARTICIPANTS = [
     carModel: "RAM Rebel", 
     links: [{ type: 'twitch', url: 'https://twitch.tv/jonvlogs' }, { type: 'youtube', url: 'https://youtube.com/@JonVlogs' }, { type: 'instagram', url: 'https://instagram.com/jonvlogs' }]
   },
-  { 
-    name: "Marcove", imageFallback: "M", twitchId: "marcove", 
+{ 
+    name: "Marcove", 
+    imageFallback: "M", 
+    twitchId: "marcove", 
+    customImage: IMAGES.MARCOVE, // <--- ADICIONADO AQUI
     carModel: "RAM Rebel", 
     links: [{ type: 'instagram', url: 'https://instagram.com/marcovebb' }, { type: 'twitch', url: 'https://twitch.tv/marcove' }]
   },
@@ -79,7 +90,7 @@ export default function Home() {
   const [isLoadingClips, setIsLoadingClips] = useState(false);
   const [activeClip, setActiveClip] = useState<string | null>(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
-
+  const [activeMapUrl, setActiveMapUrl] = useState(TRACKING_LINKS[0].url);
   const currentLocation = "Orlando"; 
 
   useEffect(() => {
@@ -155,18 +166,41 @@ export default function Home() {
         </div>
       )}
 
-      {/* MODAL MAPA (Z-INDEX 99999) */}
+{/* MODAL MAPA COM SELETOR DE RASTREAMENTO */}
       {isMapOpen && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in">
            <div className="relative w-full max-w-6xl h-[85vh] bg-slate-900 rounded-3xl overflow-hidden border border-ice-400/50 shadow-[0_0_50px_rgba(96,165,250,0.4)] flex flex-col">
-             <div className="bg-black/60 backdrop-blur-md p-4 flex items-center justify-between border-b border-white/10 absolute top-0 left-0 right-0 z-10">
+             
+             {/* Header do Modal com Seletor */}
+             <div className="bg-black/80 backdrop-blur-md p-4 flex flex-col md:flex-row items-center justify-between border-b border-white/10 relative z-20 gap-4">
                 <div className="flex items-center gap-3">
                    <div className="w-10 h-10 rounded-full bg-ice-400/20 flex items-center justify-center animate-pulse"><Navigation className="text-ice-400" size={20} /></div>
-                   <div><h3 className="font-black text-white text-lg leading-tight uppercase tracking-wider">Rastreamento</h3><p className="text-ice-300 text-xs font-bold">Ao Vivo</p></div>
+                   <div><h3 className="font-black text-white text-lg leading-tight uppercase tracking-wider">Rastreamento</h3><p className="text-ice-300 text-xs font-bold">Tempo Real</p></div>
                 </div>
-                <button onClick={() => setIsMapOpen(false)} className="bg-white/10 hover:bg-red-500/80 text-white p-2 rounded-full transition-colors cursor-pointer z-50"><X size={24} /></button>
+
+                {/* BOTÕES DE SELEÇÃO (COM ROLAGEM INVISÍVEL) */}
+                {/* Adicionei: [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] */}
+                <div className="flex gap-2 overflow-x-auto max-w-full pb-1 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  {TRACKING_LINKS.map((link) => (
+                    <button
+                      key={link.name}
+                      onClick={() => setActiveMapUrl(link.url)}
+                      className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all uppercase tracking-wider border whitespace-nowrap ${
+                        activeMapUrl === link.url
+                          ? "bg-ice-400 text-black border-ice-400 shadow-[0_0_10px_rgba(96,165,250,0.5)] scale-105"
+                          : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      {link.name}
+                    </button>
+                  ))}
+                </div>
+
+                <button onClick={() => setIsMapOpen(false)} className="absolute top-4 right-4 md:static bg-white/10 hover:bg-red-500/80 text-white p-2 rounded-full transition-colors cursor-pointer z-50"><X size={24} /></button>
              </div>
-             <iframe src={MAP_URL} className="w-full h-full" allow="geolocation" />
+
+             {/* Iframe Dinâmico */}
+             <iframe src={activeMapUrl} className="w-full h-full" allow="geolocation" />
            </div>
         </div>
       )}
