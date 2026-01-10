@@ -1,28 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Navigation, Clock, Calendar, Car, ArrowRight, Share2, ExternalLink } from "lucide-react";
+import { MapPin, Navigation, Clock, Calendar, Car, ArrowRight, Share2, ExternalLink, HelpCircle } from "lucide-react";
 
-// URL para abrir no celular (Google Maps App)
-const GOOGLE_MAPS_LINK = "https://www.google.com/maps/dir/Atlanta,+GA/Nashville,+TN";
+// URL para abrir no celular (Nashville)
+const GOOGLE_MAPS_LINK = "https://www.google.com/maps/place/Nashville,+TN";
 
-// URL do Iframe (Embed) - Rota entre Atlanta e Nashville
-const MAP_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m28!1m12!1m3!1d1672892.569949666!2d-86.83707576508386!3d34.93666657984407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m13!3e0!4m5!1s0x88f5045d6993098d%3A0x66fede2f990b630b!2sAtlanta%2C%20Ge%C3%B3rgia%2C%20EUA!3m2!1d33.748752!2d-84.38768449999999!4m5!1s0x8864ec3213eb903d%3A0x7d3fb9d0a1e9daa0!2sNashville%2C%20Tennessee%2C%20EUA!3m2!1d36.1626638!2d-86.7816016!5e0!3m2!1spt-BR!2sbr!4v1704840000000!5m2!1spt-BR!2sbr";
+// URL do Iframe (Embed) - Focado em Nashville
+const MAP_EMBED_URL = "https://maps.google.com/maps?q=Nashville,+TN&z=12&output=embed";
 
 export default function DestinoPage() {
-  // DADOS ATUALIZADOS: ATLANTA -> NASHVILLE
+  // DADOS ATUALIZADOS: EM NASHVILLE (Aguardando Próximo Destino)
   const tripData = {
-    origin: "Atlanta, GA",
-    destination: "Nashville, TN",
-    distance: "400 km (248 mi)",
-    duration: "4h 00min",
-    road: "I-75 N / I-24 W",
-    status: "Em Progresso"
+    origin: "Nashville, TN",
+    destination: "A Definir ❓",
+    distance: "---",
+    duration: "---",
+    road: "Aguardando Rota",
+    status: "Hospedados em Nashville"
   };
 
-  // --- ESCOLHA O ESTILO DO MAPA AQUI ---
-  // OPÇÃO 1: Dark Mode Clássico (Ativado)
-  const mapStyle = { filter: 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(120%) saturate(100%)' };
+  // --- ESTILO DO MAPA (Gelo/Dark) ---
+  const mapStyle = { filter: 'grayscale(100%) invert(100%) contrast(90%) brightness(95%) sepia(100%) hue-rotate(180deg) saturate(300%)' };
 
   return (
     <div className="min-h-screen pt-24 pb-10 px-4 flex flex-col items-center animate-fade-in">
@@ -38,15 +37,15 @@ export default function DestinoPage() {
         </div>
 
         {/* CARD RESUMO FLUTUANTE */}
-        <div className="flex items-center gap-8 bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-xl">
+        <div className="flex items-center gap-8 bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-xl opacity-70">
            <div className="text-right">
               <p className="text-[10px] text-slate-500 font-bold uppercase flex items-center justify-end gap-1"><Clock size={12}/> Tempo Estimado</p>
-              <p className="text-2xl font-black text-white">{tripData.duration}</p>
+              <p className="text-2xl font-black text-slate-300">{tripData.duration}</p>
            </div>
            <div className="w-px h-12 bg-white/10"></div>
            <div className="text-left">
               <p className="text-[10px] text-slate-500 font-bold uppercase flex items-center gap-1"><Car size={12}/> Distância</p>
-              <p className="text-2xl font-black text-ice-400">{tripData.distance}</p>
+              <p className="text-2xl font-black text-slate-300">{tripData.distance}</p>
            </div>
         </div>
       </div>
@@ -62,36 +61,37 @@ export default function DestinoPage() {
               <div className="absolute top-0 right-0 w-32 h-32 bg-ice-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
               
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-6 bg-green-500/10 w-fit px-3 py-1 rounded-full border border-green-500/30">
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                  <span className="text-green-400 text-xs font-bold uppercase tracking-widest">{tripData.status}</span>
+                {/* STATUS: LARANJA (PAUSA) */}
+                <div className="flex items-center gap-2 mb-6 bg-orange-500/10 w-fit px-3 py-1 rounded-full border border-orange-500/30">
+                  <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                  <span className="text-orange-400 text-xs font-bold uppercase tracking-widest">{tripData.status}</span>
                 </div>
                 
                 {/* Timeline Visual da Rota */}
                 <div className="relative pl-2">
-                   {/* Linha conectora */}
-                   <div className="absolute left-[7px] top-3 bottom-8 w-0.5 bg-gradient-to-b from-slate-600 via-ice-400 to-ice-400 h-[80%]"></div>
+                   {/* Linha PONTILHADA para indicar incerteza */}
+                   <div className="absolute left-[7px] top-3 w-0.5 border-l-2 border-dashed border-slate-600 h-[105px]"></div>
                    
-                   {/* ORIGEM */}
+                   {/* ORIGEM (ATUAL) */}
                    <div className="flex items-start gap-4 mb-10 relative z-10">
-                      <div className="w-4 h-4 rounded-full border-2 border-slate-500 bg-black shrink-0 mt-1 shadow-[0_0_10px_rgba(0,0,0,0.5)]"></div>
+                      <div className="w-4 h-4 rounded-full bg-ice-400 shrink-0 mt-1 shadow-[0_0_15px_rgba(96,165,250,0.8)]"></div>
                       <div>
-                         <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Ponto de Partida</p>
-                         <h3 className="text-2xl font-bold text-slate-300 leading-none">{tripData.origin}</h3>
+                         <p className="text-[10px] text-ice-400 font-bold uppercase mb-1">Localização Atual</p>
+                         <h3 className="text-2xl font-bold text-white leading-none">{tripData.origin}</h3>
                       </div>
                    </div>
 
-                   {/* DESTINO */}
-                   <div className="flex items-start gap-4 relative z-10">
-                      <div className="w-4 h-4 rounded-full bg-ice-400 shadow-[0_0_15px_rgba(96,165,250,0.8)] shrink-0 mt-1 flex items-center justify-center animate-pulse">
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                   {/* DESTINO (MISTÉRIO) */}
+                   <div className="flex items-start gap-4 relative z-10 opacity-60">
+                      <div className="w-4 h-4 rounded-full border-2 border-slate-600 bg-black shrink-0 mt-1 flex items-center justify-center">
+                         <HelpCircle size={10} className="text-slate-500"/>
                       </div>
                       <div>
-                         <p className="text-[10px] text-ice-400 font-bold uppercase mb-1">Próximo Destino</p>
-                         <h3 className="text-3xl font-black text-white leading-none tracking-wide">{tripData.destination}</h3>
+                         <p className="text-[10px] text-slate-500 font-bold uppercase mb-1">Próximo Destino</p>
+                         <h3 className="text-3xl font-black text-slate-500 leading-none tracking-wide italic">? ? ?</h3>
                          <div className="flex items-center gap-2 mt-2 bg-black/40 px-3 py-1.5 rounded-lg w-fit border border-white/5">
-                           <Car size={14} className="text-slate-400" />
-                           <span className="text-xs text-slate-300 font-bold">Via {tripData.road}</span>
+                           <Car size={14} className="text-slate-500" />
+                           <span className="text-xs text-slate-500 font-bold">Aguardando definição...</span>
                          </div>
                       </div>
                    </div>
@@ -103,10 +103,10 @@ export default function DestinoPage() {
            <a 
              href={GOOGLE_MAPS_LINK}
              target="_blank"
-             className="flex items-center justify-center gap-3 w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 hover:from-ice-900 hover:to-ice-800 border border-white/10 hover:border-ice-400/50 rounded-2xl text-white font-bold transition-all group shadow-lg hover:shadow-ice-400/20 hover:-translate-y-1"
+             className="flex items-center justify-center gap-3 w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-2xl text-slate-300 font-bold transition-all group"
            >
-             <ExternalLink size={20} className="text-ice-400 group-hover:scale-110 transition-transform" />
-             <span className="tracking-wider">Abrir Rota no Google Maps</span>
+             <MapPin size={20} className="text-ice-400 group-hover:scale-110 transition-transform" />
+             <span className="tracking-wider">Ver Localização no Maps</span>
            </a>
         </div>
 
@@ -128,10 +128,10 @@ export default function DestinoPage() {
            
            <div className="absolute bottom-4 left-4 z-30 bg-black/90 backdrop-blur-xl px-4 py-2 rounded-xl border border-white/10 flex items-center gap-2 shadow-lg">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-600"></span>
               </span>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Visualização do Trajeto</span>
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Base Atual</span>
            </div>
         </div>
 
